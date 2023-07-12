@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+#
+#
+
+#SMFILE=/home/uttam/scratch/system_matrix_parm100_concat_new.sm
+
+SMFILE=/home/uttam/scratch/system_matrix_180views_concatenated.sm
+
+
+
+#SMFILE=/home/uttam/3D_recon/system_matrix_3D/matrix_amap_128x128x128x1.sm
+
+TBFILE=/data2/4D_recon/C/BSpline/singlehead_my_spline_9basis_stress.bin
+
+#TBFILE=/data2/4D_recon/C/BSpline/multihead_spline_9basis.bin
+
+
+SIZEOFASINGLEPROJECTIONANGLE=16384
+
+
+NUMBEROFITERATIONS=60
+
+
+#TOMOFILE=/data2/4D_recon/C/Patient_Data_Preprocessed/March_2012/2301/4D_stress/2012032301_stress_128x128x120x20.f32le
+
+TOMOFILE=/home/uttam/statcy/raw/REST_Dynamic_Cardiac_1_even_y_flipped.raw
+
+#TOMOFILE=/home/uttam/statcy/raw/REST_Dynamic_Cardiac_1_odd_y_flipped.raw
+
+RECONFILE=/home/uttam/scratch/testOutput4Drecon_even_180views.f32le
+
+
+# for 3d put R 
+# for 4d put r
+
+#argv[4]=R (for 3d),r (for 4D)
+
+#add these for 4D 
+#argv[[6]
+#$TBFILE
+#argv[7] 
+#$SIZEOFASINGLEPROJECTIONANGLE
+
+#echo
+
+./use_sm $SMFILE $TOMOFILE $RECONFILE r $NUMBEROFITERATIONS $TBFILE $SIZEOFASINGLEPROJECTIONANGLE
+
+
+#./use_sm $SMFILE $TOMOFILE $RECONFILE R $NUMBEROFITERATIONS 
+
+
+#0	1	2	3   		4	5
+
+#echo "done"
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="lbl_recon" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/lbl_recon" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/lbl_recon" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="EndianThis.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="MMD.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ManMat.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ParallelPointResponse/Parallel_ptresp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ParallelPointResponse/cfiArray.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ParallelPointResponse/cfiArray.h" />
+		<Unit filename="ParallelPointResponse/cfiError.h" />
+		<Unit filename="ParallelPointResponse/cfiMatrix.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ParallelPointResponse/cfiMatrix.h" />
+		<Unit filename="ParallelPointResponse/cfiMesh2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ParallelPointResponse/cfiMesh2.h" />
+		<Unit filename="ParallelPointResponse/cfiTypes.h" />
+		<Unit filename="ParallelPointResponse/cfiVector.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ParallelPointResponse/cfiVector.h" />
+		<Unit filename="Pinhole/generate_pinhole.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Pinhole/nrutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Pinhole/nrutil.h" />
+		<Unit filename="SSR.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="use_sm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="use_sm_omp.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+
+SMFILE=/home/uttam/xcat/data/system_matrix/xcat_64x64x64x360.sm
+
+# use the size of a single projection, i.e., 128x128 = 16384
+SIZEOFASINGLEPROJECTIONANGLE=4096
+
+NUMBEROFITERATIONS=20
+
+TOMOFILE=/home/uttam/xcat/data/projection/concat_64x64x360.bin
+
+#f32le=float 32 little endian
+
+TBFILE=/data2/4D_recon/C/BSpline/xcat/xcat_360basis_sigma2.bin
+
+# recon files=argv[3] #out put file
+RECONFILE=/home/uttam/xcat/data/recon/test_360basis_sigma2.bin
+
+
+./use_sm $SMFILE  $TOMOFILE  $RECONFILE r $NUMBEROFITERATIONS  $TBFILE $SIZEOFASINGLEPROJECTIONANGLE
+
+#0	1	2	3   		4	5
+
+echo ""
+

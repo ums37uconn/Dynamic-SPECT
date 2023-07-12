@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="EndianThis.c" open="0" top="0" tabpos="1">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="MMD.c" open="1" top="0" tabpos="3">
+		<Cursor position="2363" topLine="36" />
+	</File>
+	<File name="ManMat.c" open="0" top="0" tabpos="4">
+		<Cursor position="0" topLine="18" />
+	</File>
+	<File name="ParallelPointResponse/Parallel_ptresp.c" open="1" top="1" tabpos="4">
+		<Cursor position="7553" topLine="217" />
+	</File>
+	<File name="ParallelPointResponse/cfiArray.c" open="0" top="0" tabpos="13">
+		<Cursor position="10442" topLine="418" />
+	</File>
+	<File name="ParallelPointResponse/cfiArray.h" open="0" top="0" tabpos="12">
+		<Cursor position="1215" topLine="57" />
+	</File>
+	<File name="ParallelPointResponse/cfiError.h" open="0" top="0" tabpos="14">
+		<Cursor position="852" topLine="23" />
+	</File>
+	<File name="ParallelPointResponse/cfiMatrix.c" open="0" top="0" tabpos="8">
+		<Cursor position="24779" topLine="913" />
+	</File>
+	<File name="ParallelPointResponse/cfiMatrix.h" open="0" top="0" tabpos="0">
+		<Cursor position="2831" topLine="111" />
+	</File>
+	<File name="ParallelPointResponse/cfiMesh2.c" open="0" top="0" tabpos="7">
+		<Cursor position="26497" topLine="923" />
+	</File>
+	<File name="ParallelPointResponse/cfiMesh2.h" open="0" top="0" tabpos="0">
+		<Cursor position="2" topLine="0" />
+	</File>
+	<File name="ParallelPointResponse/cfiTypes.h" open="0" top="0" tabpos="6">
+		<Cursor position="168" topLine="77" />
+	</File>
+	<File name="ParallelPointResponse/cfiVector.c" open="0" top="0" tabpos="9">
+		<Cursor position="21166" topLine="857" />
+	</File>
+	<File name="ParallelPointResponse/cfiVector.h" open="0" top="0" tabpos="11">
+		<Cursor position="81" topLine="0" />
+	</File>
+	<File name="Pinhole/generate_pinhole.c" open="0" top="0" tabpos="3">
+		<Cursor position="78" topLine="0" />
+	</File>
+	<File name="SSR.c" open="0" top="0" tabpos="0">
+		<Cursor position="0" topLine="12" />
+	</File>
+	<File name="use_sm.c" open="1" top="0" tabpos="1">
+		<Cursor position="13507" topLine="338" />
+	</File>
+	<File name="use_sm_omp.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="23433" topLine="669" />
+	</File>
+</CodeBlocks_layout_file>

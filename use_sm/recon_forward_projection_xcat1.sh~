@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+#
+
+TBFILE=/data2/4D_recon/C/BSpline/phantom_basis001.bin
+
+SIZEOFASINGLEPROJECTIONANGLE=4096 
+
+NUMBEROFITERATIONS=1
+
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32
+      
+do
+
+SMFILE=/home/uttam/xcat/data/system_matrix/test_angle$i.sm
+        #/data2/4D_recon/C/Phantom/MCat/system_matrix/foward_projection/360.sm
+TOMOFILE=/home/uttam/xcat/data/cropped_activity/test/_act_$i.bin
+       #/data2/4D_recon/C/Phantom/MCat/Phantom_Data/respiratory/10_act_60.bin
+RECONFILE=/home/uttam/xcat/data/projection/$i.bin
+       #/data2/4D_recon/C/Phantom/MCat/Phantom_Data/respiratory/Projection/10_act_60.bin
+				   
+# recon
+
+#echo "./use_sm $SMFILE $TOMOFILE $RECONFILE r $NUMBEROFITERATIONS $TBFILE $SIZEOFASINGLEPROJECTIONANGLE"
+
+#./use_sm $SMFILE $TOMOFILE $RECONFILE f $NUMBEROFITERATIONS $TBFILE $SIZEOFASINGLEPROJECTIONANGLE
+
+./use_sm $SMFILE $RECONFILE $TOMOFILE f $NUMBEROFITERATIONS $TBFILE $SIZEOFASINGLEPROJECTIONANGLE
+
+#0	1	2	3   		4	5
+
+
+done
+#echo ""
+
