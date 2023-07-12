@@ -1,0 +1,30 @@
+120	: Angle count, number of angle steps
+90	: Angle start [degrees] - which part of the circle to start rotation from, 0 being left of patient, going counter clockwise (90 is bottom, 180 right of patient, etc.)
+360	: Angle modifier [degrees] - the total angle made in a rotation
+1	: Angle direction - direction of rotation: (+1) is counter clockwise, (-1) is clockwise
+0	: XY direction of the detector - if 0 bins go from patient's left to right, when detector is above (elsewise the other way)  
+0	: Z direction of the detector - if 0, bins go from patient's head to the feet, where feet are at gantry (elsewise the other way) 
+128	: Detector XY count, number of bins in detector on the X/Y axis
+128	: Detector Z count, number of bins in detector on the Z axis
+
+128	: Voxel X count, number of voxels in volume on the X axis
+128	: Voxel Y count, number of voxels in volume on the Y axis
+128	: Voxel Z count, number of voxels in volume on the Z axis
+128	: Atn Z count, number of voxels in attenuation map on the Z axis (should be bigger than that for the volume - see notes)
+
+0.44	: Voxel X width [cm]
+0.44	: Voxel Y width [cm]
+0.44	: Voxel Z width [cm]
+0.44	: Detector bin width [cm]
+
+29.0	: Detector radius from center of rotation [cm]
+46.0	: Focal Length [cm] (should be Detector Radius + half of size of volume in big axis) - for parallel collimator, Focal Length gives distance from detector to plane containing base of point response cone
+0.14	: Collimator Radius [cm]
+3.28	: Collimator Length [cm]
+0.5	: Collimator Offset [cm] - distance between the end of the collimator and the detector crystal 
+
+2	: Ray samples per voxel (should be kept at 2)
+2	: Rays per voxel (should be kept at 2)
+5	: Max Point response count, number of rays sent out in each axis, should be 1 for no point response, or a high number otherwise (100 is mostly big enough)
+
+0.05	: Attenuation cutoff 
