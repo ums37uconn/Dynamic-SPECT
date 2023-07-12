@@ -1,0 +1,235 @@
+//****************
+//Uttam Shrestha 07.19.2012
+//This code reads the binary basis file and calculate the tensor product
+//Input file is poisson_basis.bin
+//Output file is poisson_basis.plt
+//Each basis is printed columnwise
+//***************
+
+
+#include<iostream>
+#include<cstdlib>
+#include<cmath>
+#include<fstream>
+#include<cstring>
+
+
+
+using namespace std;
+typedef float cfiScalar; 
+typedef int cfiCounter; 
+
+
+int main(){
+
+	FILE *fid;
+	char basis_fname[128];
+
+
+//read time basis ("t")
+
+	strcpy(basis_fname,  "/data2/4D_recon/C/BSpline/singlehead_Bspline_9basis_Yoonsuk_rg.bin");
+	//read basis file
+	if((fid = fopen(basis_fname, "rb"))==NULL)
+		  {
+		     fprintf(stderr, "Could not open time basis file \"%s\" for reading\n", basis_fname);
+		     exit(1);
+	    	    }
+	
+	cfiCounter tbNum, tbLen, tN;
+	cfiScalar *tbasis;
+	
+	fread(&tbNum, sizeof(int), 1, fid);//read number of the basis
+	fread(&tbLen, sizeof(int), 1, fid);//read length of the basis
+	tN=tbNum*tbLen;
+	tbasis  = new cfiScalar[tN];
+	fread(tbasis, sizeof(cfiScalar), tN, fid);
+
+
+cout<<"Number of  time basis="<<tbNum <<endl<<"Length of time basis="<<tbLen<<endl;
+//store time data to plot
+ofstream time_test ("time.plt");
+
+	for (int j=0;j<tbLen; j++){
+			for (int i=0;i<tbNum; i++){
+				time_test<<tbasis[i*tbNum+j]<<"	";
+
+		}
+		time_test<<endl;
+}
+time_test.close();
+
+
+//read respiratory gate basis ("t")
+
+	strcpy(basis_fname,  "/data2/4D_recon/C/BSpline/xcat_gaussian_40x40.bin");
+	//strcpy(basis_fname,  "/home/uttam/4D_recon/C/BSpline/phantom_gate_basis_1x8.bin");
+	//read basis file
+	if((fid = fopen(basis_fname, "rb"))==NULL)
+		  {
+		     fprintf(stderr, "Could not open respiratory basis file \"%s\" for reading\n", basis_fname);
+		     exit(1);
+	    	    }
+	
+	cfiCounter rbNum, rbLen, rN;
+	cfiScalar *rbasis;
+	
+	fread(&rbNum, sizeof(int), 1, fid);//read number of the basis
+	fread(&rbLen, sizeof(int), 1, fid);//read length of the basis
+	rN=rbNum*rbLen;
+	rbasis  = new cfiScalar[rN];
+	fread(rbasis, sizeof(cfiScalar), rN, fid);
+
+
+	cout<< "Number of  respiratory basis="<< rbNum <<endl<<"Length of respiratory basis="<<rbLen<<endl;
+
+
+//store respiratory data to plot
+	ofstream resp_test ("respiratory.csv");
+
+	for (int j=0;j<rbLen; j++){
+			for (int i=0;i<rbNum; i++){
+				resp_test<<rbasis[i*rbNum+j]<<"		";
+
+		}
+		resp_test<<endl;
+	}
+
+	resp_test.close();
+
+
+
+//find tensor product between time and respiratory basis
+
+
+	cfiCounter trbNum, trbLen, trN;
+ 	trbNum=tbNum*rbNum;
+
+	trbLen=tbLen*rbLen;
+	trN=trbNum*trbLen;
+
+
+	//cout<<trbLen<<"\t"<<trbNum<<endl;
+
+
+	cfiScalar *trbasis;
+	trbasis  = new cfiScalar[trN];
+	int index=0;
+
+
+	for (int i=0;i<tbNum; i++){//tb number
+		for (int j=0;j<rbNum; j++){//rb number
+			for (int ii=0;ii<tbLen; ii++){//tb length	
+				for (int jj=0;jj<rbLen; jj++){//rb length
+
+				trbasis[index]=tbasis[i*tbLen+ii] * rbasis[j*rbLen+jj];
+
+			index++;
+
+		}}}}
+
+
+//for (int i=180;i<240; i++){if(i%60==0)cout<<"==============="<<endl;cout<<trbasis[i]<<endl;}
+
+//cout<<trbLen<<"\t"<<trbNum<<endl;
+
+//store timeXrespiratory data to plot
+ofstream timeXresp_test ("xcat_timexgaussian.bin");
+
+
+for (int j=0;j<trbLen; j++){
+	for (int i=0;i<trbNum; i++){
+				timeXresp_test<<trbasis[i*trbLen+j]<<",";
+
+		}
+		timeXresp_test<<endl;
+}
+
+timeXresp_test.close();
+
+
+
+//read cardiac basis ("c")
+	strcpy(basis_fname,  "/home/uttam/4D_recon/C/BSpline/cardiac_basis_gaussian_12x12_sigma8.bin");
+	//read basis file
+	if((fid = fopen(basis_fname, "rb"))==NULL)
+		  {
+		     fprintf(stderr, "Could not open cardiac basis file \"%s\" for reading\n", basis_fname);
+		     exit(1);
+	    	    }
+
+	
+	cfiCounter cbNum, cbLen, cN;
+	cfiScalar *cbasis;
+	
+	fread(&cbNum, sizeof(int), 1, fid);//read number of the basis
+	fread(&cbLen, sizeof(int), 1, fid);//read length of the basis
+	cN=cbNum*cbLen;
+	cbasis  = new cfiScalar[cN];
+	fread(cbasis, sizeof(cfiScalar), cN, fid);
+
+
+cout<<"Number of  cardiac basis="<<cbNum <<endl<<"Length of cardiac basis="<<cbLen<<endl;
+
+
+
+//find tensor product between time and respiratory and cardiac basis
+
+
+	cfiCounter trcbNum, trcbLen, trcN;
+
+ 	trcbNum=trbNum*cbNum;//total number of basis
+
+	trcbLen=trbLen*cbLen;//length of each basis
+
+	trcN=trcbNum*trcbLen;//total number of matrix element
+
+
+	//cout<<trbLen<<"\t"<<trbNum<<endl;
+
+
+	cfiScalar *trcbasis;
+	trcbasis  = new cfiScalar[trcN];
+
+	int index1=0;
+
+	for (int i=0;i<cbNum; i++){//cardiac number
+		for (int j=0;j<trbNum; j++){//time-respiratory number
+			for (int ii=0;ii<cbLen; ii++){//cardiac length
+				for (int jj=0;jj<trbLen; jj++){//time-respiratroy length
+
+				trcbasis[index1]=cbasis[i*cbLen+ii] * trbasis[j*trbLen+jj];
+
+		index1++;
+
+		}}}}
+
+
+cout<<trcbLen<<"\t"<<trcbNum<<endl;
+//store timeXrespiratoryXcardiac data to plot
+ofstream trc_test ("time_1x6_respiratory_5x5_cardiac_12x12_sigma_4x8.csv");
+for (int j=0;j<trcbLen; j++){
+			for (int i=0;i<trcbNum; i++){
+				trc_test<<trcbasis[i*trcbLen+j]<<",";
+
+		}
+
+		trc_test<<endl;
+
+}
+
+trc_test.close();
+
+
+delete[]tbasis;
+delete[]rbasis;
+delete[]cbasis;
+delete[]trbasis;
+delete[]trcbasis;
+
+}
+
+
+
+
+
