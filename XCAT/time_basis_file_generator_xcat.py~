@@ -1,0 +1,410 @@
+#! /usr/bin/python
+
+# 2011.01.04
+# Fares Alhassen
+# Generates a binary time basis file for a dynamic SPECT acquistion
+
+# loading cPickle
+import cPickle as pickle
+import struct
+# loading csv reading module
+import csv
+
+# format
+# (1) the number of time basis functions to be used (4 byte int)
+# (2) the number of time points in each basis function (4 byte int)
+# (3)-(X) the values of those time basis functions (first all the values of function 1, then 2...) (4 byte float)
+
+# **********************************************************************************************
+
+# functions
+
+def drange(start, stop, step):
+	r = start
+	while r < stop:
+		yield r
+		r += step       
+
+def writePickleObjectToFile( object, file ) :
+#	"""Writes a pickled object to a binary file"""
+	pickle.dump( object, file )
+
+def writeBinaryObjectToFile( object, file, objectType ) :
+#	"""Writes an object of type objectType ('i' or 'f') to a binary file"""
+	binaryData = struct.pack( objectType, object )
+	file.write( binaryData )
+	
+def writeFloatToFile( numberToWrite, file ) :
+	file.write( float.hex( numberToWrite ) )
+
+def convertStringToData( inputString, objectType ) :
+	return( struct.unpack( objectType, inputString ) )
+	
+def readBinaryObjectFromFile( file, objectType, objectSize ) :
+	return( convertStringToData( file.read( objectSize ), objectType )[ 0 ] )
+	
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+#def calculateInitialOffset( numberOfElements, elementSpacing, origin = 0 ):
+#	"""Calculates the initial offset of a series of elements centered about the origin"""
+#	offset = -( ( numberOfElements - 1 ) / 2.0 * elementSpacing - origin )
+#	return( offset )
+#
+#def calculateIthPosition( i, elementSpacing, offset ):
+#	"""Calculates the position of the ith (0 to N-1) element in a series of elements with an offset"""
+#	position = i * elementSpacing + offset
+#	return( position )
+#
+#def writePinholeData( fileHandle, pinholeNumber, parameterNames, parameters ):
+#	"""Writes pinhole parameters for pinhole pinholeNumber to fileHandle, assuming the file is open for writing"""
+#	parameterRange = range( len( parameters ) )
+#	for i in parameterRange:
+#		# print "Writing pinhole parameter ", i, "data..."
+#		stringOutputParameter = parameterNames[ i ] + ":" + str( pinholeNumber + 1 ) + "=" + str( parameters[ i ] ) + "\n"
+#		fileHandle.write( stringOutputParameter )
+
+# **********************************************************************************************
+
+# space
+print ""
+print "Time basis file generator"
+# print "Fares Alhassen, UCSF"
+# print "2011.04.26"
+print ""
+
+# input parameters
+
+# constants
+
+# file types
+# integer
+intType = 'i'
+# float
+floatType = 'f'
+
+# output directory
+outputDirectory = "./"
+
+# debug output on (0: false, 1: true)
+debugOutputOn = 0
+
+# **********************************************************************************************
+
+# the number of time basis functions to be used
+
+# test settings
+# numberOfTimeBasisFunctions = 5
+# the values of the time basis functions
+# timeBasisFunctionGrid = [ 12.0, 36.0, 72.0, 120.0, 216.0, 432.0 ]
+# output file name
+# outputFilename = "time_basis_6_points.bin"
+
+# test settings with zero point
+# numberOfTimeBasisFunctions = 5
+# timeBasisFunctionGrid = [ 0.0, 12.0, 36.0, 72.0, 120.0, 216.0, 432.0 ]
+# outputFilename = "time_basis_7_points.bin"
+
+# dummy settings
+# numberOfTimeBasisFunctions = 1
+# timeBasisFunctionGrid = [ 1.0 ]
+# outputFilename = "dummy_time_basis.bin"
+
+# **********************************************************************************************
+
+# test settings
+# numberOfTimeBasisFunctions = 5
+# outputFilename = "time_basis_five_splines_test.bin"
+# CSV filename for time basis data generated from BSplineRow.m in MATLAB
+# test data with 5 rows
+# inputCSVFilename="time_basis_data_test.csv"
+
+# CSV filename for time basis data generated from BSplineRow.m in MATLAB for sample 288 projection data set
+# timing intervals: 0-8, 8-24, 24-48, 48-80, 80-144, 144-288
+# inputCSVFilename="time_basis_data_288_s.csv"
+# matlab command: tbasis=BsplineRow([0 8 24 48 80 144 288]);
+# inputCSVFilename="time_basis_data_288_s.csv"
+# outputFilename = "time_basis_five_splines_288_s.bin"
+
+# CSV filename for time basis data generated from BSplineRow.m in MATLAB for 2011.04 432 projection data set
+# timing intervals
+# timing intervals: 0-12, 12-36, 36-72, 72-120, 120-216, 216-432
+# inputCSVFilename="time_basis_data.csv"
+# matlab command: tbasis=BsplineRow([0 12 36 72 120 216 432]);
+# inputCSVFilename="time_basis_data_432_s.csv"
+# outputFilename = "time_basis_five_splines_432_s.bin"
+# inputCSVFilename="time_basis_data_648_s.csv"
+# outputFilename = "time_basis_five_splines_648_s.bin"
+#
+# 2011.06.21
+# new timing intervals (Yuval's original)
+# 0-4, 4-12, 24-40, 40-72, 72-432
+# inputCSVFilename="time_basis_data_0-4-12-24-40-72-432_s.csv"
+# outputFilename = "time_basis_five_splines_0-4-12-24-40-72-432_s.bin"
+
+# **********************************************************************************************
+# **********************************************************************************************
+
+# real settings
+
+# generated in Excel?
+# generatedInExcel = 0
+generatedInExcel = 1
+
+# 2011.07.12
+# new multi-head splines
+# inputCSVFilename = "multihead_spline_p432.csv"
+# outputFilename = "multihead_spline_p432.bin"
+# numberOfTimeBasisFunctions = 5
+
+# 2011.07.19
+# new multi-head splines with additional DC spline
+#inputCSVFilename = "multihead_spline_DC_p432.csv"
+#outputFilename = "multihead_spline_DC_p432.bin"
+# numberOfTimeBasisFunctions = 6
+
+# 2011.07.13
+# continuous version of multi-head splines
+# inputCSVFilename = "singlehead_spline_p216.csv"
+# outputFilename = "singlehead_spline_p216.bin"
+#inputCSVFilename = "singlehead_spline_DC_p216.csv"
+#  outputFilename = "singlehead_spline_DC_p216.bin"
+# numberOfTimeBasisFunctions = 6
+
+# 2011.07.21
+# new splines with 7 basis functions including a DC spline
+# inputCSVFilename = "multihead_spline_7_bf.csv"
+# outputFilename = "multihead_spline_7_bf.bin"
+# inputCSVFilename = "singlehead_spline_7_bf.csv"
+# outputFilename = "singlehead_spline_7_bf.bin"
+# numberOfTimeBasisFunctions = 7
+
+# 2011.08.01
+# new splines with 6 basis functions including a DC spline generated using BsplineFitter.m with Pt1 Philips recon blood pool TAC data
+# inputCSVFilename = "multihead_spline_fitted.csv"
+# outputFilename = "multihead_spline_fitted.bin"
+# inputCSVFilename = "singlehead_spline_fitted.csv"
+# outputFilename = "singlehead_spline_fitted.bin"
+# numberOfTimeBasisFunctions = 6
+
+# 2011.08.08
+# new splines with 6 basis functions including a DC spline generated using BsplineMultiFitter.m
+# inputCSVFilename = "multihead_spline_mfitted.csv"
+# outputFilename = "multihead_spline_mfitted.bin"
+# inputCSVFilename = "singlehead_spline_mfitted.csv"
+# outputFilename = "singlehead_spline_mfitted.bin"
+# numberOfTimeBasisFunctions = 6
+
+# 2011.11.23
+# new exponential spline + DC for phantom studies
+# inputCSVFilename = "./multihead_exponential/multihead_exponential_spline.csv"
+# outputFilename = "./multihead_exponential/multihead_exponential_spline.bin"
+# inputCSVFilename = "./multihead_exponential/singlehead_exponential_spline.csv"
+# outputFilename = "./multihead_exponential/singlehead_exponential_spline.bin"
+# numberOfTimeBasisFunctions = 2
+
+# 2011.11.23
+# five exponential splines + DC for phantom studies
+# inputCSVFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_10_p.csv"
+# outputFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_10_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_10_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_10_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_20_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_20_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_20_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_20_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_05_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_05_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_05_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_05_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_01_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/multihead_exponential_six_splines_variation_01_p.bin"
+#inputCSVFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_01_p.csv"
+#outputFilename = "./multihead_exponential_six_splines/singlehead_exponential_six_splines_variation_01_p.bin"
+# numberOfTimeBasisFunctions = 6
+
+# 2012.01.24
+# GE Hawkeye cardiac acquistion
+#inputCSVFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_01_p_GE.csv"
+#outputFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_01_p_GE.bin"
+# inputCSVFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_05_p_GE.csv"
+# outputFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_05_p_GE.bin"
+# inputCSVFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_10_p_GE.csv"
+# outputFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_10_p_GE.bin"
+#inputCSVFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_20_p_GE.csv"
+#outputFilename = "./multihead_exponential_GE/singlehead_exponential_six_splines_variation_20_p_GE.bin"
+#numberOfTimeBasisFunctions = 6
+#inputCSVFilename = "./multihead_exponential_GE/singlehead_exponential_spline_GE.csv"
+#outputFilename = "./multihead_exponential_GE/singlehead_exponential_spline_GE.bin"
+#numberOfTimeBasisFunctions = 2
+# multihead
+#inputCSVFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_01_p_GE.csv"
+#outputFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_01_p_GE.bin"
+#inputCSVFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_05_p_GE.csv"
+#outputFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_05_p_GE.bin"
+#inputCSVFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_10_p_GE.csv"
+#outputFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_10_p_GE.bin"
+#inputCSVFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_20_p_GE.csv"
+#outputFilename = "./multihead_exponential_GE/multihead_exponential_six_splines_variation_20_p_GE.bin"
+#numberOfTimeBasisFunctions = 6
+#inputCSVFilename = "./multihead_exponential_GE/multihead_exponential_spline_GE.csv"
+#outputFilename = "./multihead_exponential_GE/multihead_exponential_spline_GE.bin"
+#numberOfTimeBasisFunctions = 2
+
+# 2012.03.05
+# GE Hawkeye cardiac acquistion
+# inputCSVFilename = "./CSPECT/Pt1/Pt1_rest_singlehead_spline_fitted.csv"
+# outputFilename = "./CSPECT/Pt1/Pt1_rest_singlehead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/Pt1/Pt1_stress_singlehead_spline_fitted.csv"
+# outputFilename = "./CSPECT/Pt1/Pt1_stress_singlehead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/Pt1/Pt1_rest_multihead_spline_fitted.csv"
+# outputFilename = "./CSPECT/Pt1/Pt1_rest_multihead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/Pt1/Pt1_stress_multihead_spline_fitted.csv"
+# outputFilename = "./CSPECT/Pt1/Pt1_stress_multihead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/2012030501/Pt1_rot20_stress_multihead_spline_fitted.csv"
+# outputFilename = "./CSPECT/2012030501/Pt1_rot20_stress_multihead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/2012030501/Pt1_rot20_rest_multihead_spline_fitted.csv"
+# outputFilename = "./CSPECT/2012030501/Pt1_rot20_rest_multihead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/2012030501/Pt1_rot20_stress_singlehead_spline_fitted.csv"
+# outputFilename = "./CSPECT/2012030501/Pt1_rot20_stress_singlehead_spline_fitted.bin"
+# inputCSVFilename = "./CSPECT/2012030501/Pt1_rot20_rest_singlehead_spline_fitted.csv"
+# outputFilename = "./CSPECT/2012030501/Pt1_rot20_rest_singlehead_spline_fitted.bin"
+# numberOfTimeBasisFunctions = 6
+# inputCSVFilename = "./CSPECT/201203102_13_splines_1200_projections/2012031002_all_multihead_spline.csv"
+# outputFilename = "./CSPECT/201203102_13_splines_1200_projections/2012031002_all_multihead_spline.bin"
+
+#inputCSVFilename = "./CSPECT/201203102_13_splines_1200_projections/2012031002_all_singlehead_spline.csv"
+#outputFilename = "./CSPECT/201203102_13_splines_1200_projections/2012031002_all_singlehead_spline.bin"
+
+
+inputCSVFilename = "/data2/4D_recon/C/BSpline/xcat/xcat_360basis_sigma2.csv"
+outputFilename = "./xcat_test_16basis.bin"
+
+numberOfTimeBasisFunctions = 360
+
+
+# **********************************************************************************************
+# **********************************************************************************************
+
+
+# initializing time basis function grid
+timeBasisFunctionGrid = []
+for i in range( numberOfTimeBasisFunctions ):
+	timeBasisFunctionGrid.extend([ [] ])
+
+# opening csv file
+
+if generatedInExcel:
+	inputCSVFile = open( inputCSVFilename, 'rU' ) 
+	reader = csv.reader( inputCSVFile, dialect='excel' )
+else:
+	inputCSVFile = open( inputCSVFilename, 'rb' )
+	reader = csv.reader( inputCSVFile )
+
+# reading lines in csv file
+currentRow = 0
+for line in reader:
+	# print line
+	currentFunction = 0
+	for inputString in line:
+		# print inputString
+		# inputData = float.fromhex( inputString )
+		if is_number( inputString ):
+			inputData = float( inputString )
+			timeBasisFunctionGrid[ currentFunction ].extend( [ inputData ] )
+			currentFunction += 1
+	currentRow += 1
+	
+# setting number of rows
+numberOfDataPoints = currentRow
+
+# printing read time basis function
+if debugOutputOn:
+	print "Time basis function data:"
+	print timeBasisFunctionGrid
+	print ""
+
+# dummy settings
+# numberOfTimeBasisFunctions = 1
+# timeBasisFunctionGrid = [ 1.0 ]
+# outputFilename = "dummy_time_basis.bin"
+
+# **********************************************************************************************
+
+# derived parameters
+
+# the number of time points in each basis function
+numberOfTimePoints = numberOfDataPoints
+numberOfTimeValuePoints = numberOfTimePoints
+# setting time point range
+# firstTimePoint = 1
+# lastTimePoint = numberOfTimePoints + firstTimePoint
+# timePointStep = 1
+# timePointRange = range( firstTimePoint, lastTimePoint, timePointStep )
+# output file path
+outputPath = outputDirectory + outputFilename
+# file reading parameters
+intSize = struct.calcsize( intType )
+floatSize = struct.calcsize( floatType )
+
+# **********************************************************************************************
+
+# generating output binary file
+print "Writing to", outputPath, "..."
+with open( outputPath, 'wb' ) as fileHandle:
+	# writing numberOfTimeBasisFunctions
+	writeBinaryObjectToFile( numberOfTimeBasisFunctions, fileHandle, intType )
+	# writing numberOfTimePoints
+	writeBinaryObjectToFile( numberOfTimePoints, fileHandle, intType )
+	# writing output for each basis function
+	basisFunctionRange = range( numberOfTimeBasisFunctions )
+	for i in basisFunctionRange:
+		for timeFunctionValue in timeBasisFunctionGrid[ i ]:
+			writeBinaryObjectToFile( timeFunctionValue, fileHandle, floatType )
+			# writeFloatToFile( timeFunctionValue, fileHandle )
+print "Write complete."
+print ""
+
+# **********************************************************************************************
+
+# reading output binary file
+print "Verifying output file content."
+
+with open( outputPath, 'rb' ) as fileHandle:
+	# initializing verificationSuccessful
+	verificationSuccessful = 1
+	# error allowed in float conversion
+	allowedError = 1e-5
+	# reading file
+	# fileContents = pickle.load( fileHandle )
+	inputNumberOfTimeBasisFunctions = readBinaryObjectFromFile( fileHandle, intType, intSize )
+	print "Number of time basis functions:", inputNumberOfTimeBasisFunctions
+	inputNumberOfTimePoints = readBinaryObjectFromFile( fileHandle, intType, intSize )
+	print "Number of time points:", inputNumberOfTimePoints
+	# generate time data
+	if debugOutputOn:
+		print "Time points:"
+	for i in basisFunctionRange:
+		timeGrid = range( inputNumberOfTimePoints )
+		timeIndex = 0
+		for timeFunctionValue in timeBasisFunctionGrid[ i ]:
+			timeGrid[ timeIndex ] = readBinaryObjectFromFile( fileHandle, floatType, floatSize )
+			# print timeGrid[ timeIndex ]
+			# print timeBasisFunctionGrid[ i ][ timeIndex ]
+			if not( timeBasisFunctionGrid[ i ][ timeIndex ] - allowedError < timeGrid[ timeIndex ] and timeGrid[ timeIndex ] < timeBasisFunctionGrid[ i ][ timeIndex ] + allowedError ):
+				# mismatch
+				verificationSuccessful = 0
+			timeIndex += 1
+		if debugOutputOn:
+			print "Function", i, ":", timeGrid
+
+# output if verification successful
+if verificationSuccessful:
+	print "Verification successful."
+else:
+	print "Verification failed."
+print ""
